@@ -596,8 +596,21 @@ unique_io <- anti_join(io_df, nonio_df, by = c("ZIPCODE"))
 unique_nonio <- anti_join(nonio_df, io_df, by = c("ZIPCODE"))
 
 
-anti_join(io_df, nonio_df, by = c("ZIPCODE")) %>%  
+#1
+p <- gather(unique_io, "rates", "value", 4:6) 
+q <- gather(unique_nonio, "rates", "value", 4:6)
+ggplot() + geom_violin(data = p, aes(x = rates, y=value), fill = "red", alpha = 0.5) + geom_violin(data = q, aes(x = rates, y=value), fill = "yellow", alpha = 0.5) + coord_flip() + ggtitle('Electricity Rates For Zipcodes With Only Either Investor Owned Utilities or Non-Investor Owned Utilities') 
 
+#2
+r <- gather(ij_df, "io_rates", "io_value", 4:6)
+r <- gather(r, "nonio_rates", "nonio_value", 7:9)
+
+s <- ggplot(r, aes(x=io_rates, y = io_value)) + geom_violin(fill = "red", alpha = 0.5)
+s <- s + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + + ggtitle('Electricity Rates For Zipcodes With Both Investor Owned Utilities And Non-Investor Owned Utilities') 
+print(s)
+
+
+#3
 
 
                  
