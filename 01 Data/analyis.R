@@ -579,8 +579,8 @@ levels(nonio_df$state)
 
 
 myplot <- function(df, x) {
-  names(df) <- c("x", "n")
-  ggplot(df, aes(x=x, y=n)) + geom_point()
+  names(df) <- c("x", "count")
+  ggplot(df, aes(x=x, y=count)) + geom_point() + xlab(x) + theme(axis.text.x=element_text(angle=90, size=7))
 }
 
 categoricals_io <- eval(parse(text=substring(getURL(URLencode('http://129.152.144.84:5001/rest/native/?query="select * from electricity_io"'), httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnFor = 'R', returnDimensions = 'True'), verbose = TRUE), 1, 2^31-1)))
@@ -595,12 +595,12 @@ for (i in names(io_df)) {
   }
 }
 
-png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals.png", width = 25, height = 10, units = "in", res = 72)
+png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals_io_1.png", width = 25, height = 10, units = "in", res = 72)
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(1, 12)))   
+pushViewport(viewport(layout = grid.layout(2, 12)))   
 
-print(l[[1]], vp = viewport(layout.pos.row = 1, layout.pos.col = 1:6))
-print(l[[2]], vp = viewport(layout.pos.row = 1, layout.pos.col = 7:12))
+print(l[[1]], vp = viewport(layout.pos.row = 1, layout.pos.col = 1:12))
+print(l[[2]], vp = viewport(layout.pos.row = 2, layout.pos.col = 1:12))
 
 dev.off()
 
@@ -608,7 +608,7 @@ dev.off()
 
 myplot1 <- function(df, x) {
   names(df) <- c("x")
-  ggplot(df, aes(x=x)) + geom_histogram()
+  ggplot(df, aes(x=x)) + geom_histogram() + xlab(x) + theme(axis.text.x=element_text(angle=90, size=7))
 }
 l <- list()
 for (i in names(io_df)) {   
@@ -621,7 +621,7 @@ for (i in names(io_df)) {
   }
 }
 
-png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals2.png", width = 25, height = 10, units = "in", res = 72)
+png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals_io_2.png", width = 25, height = 10, units = "in", res = 72)
 grid.newpage()
 pushViewport(viewport(layout = grid.layout(2, 12)))   
 
@@ -648,12 +648,12 @@ for (i in names(io_df)) {
   }
 }
 
-png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals3.png", width = 25, height = 10, units = "in", res = 72)
+png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals_nonio_1.png", width = 25, height = 10, units = "in", res = 72)
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(1, 12)))   
+pushViewport(viewport(layout = grid.layout(2, 12)))   
 
-print(l[[1]], vp = viewport(layout.pos.row = 1, layout.pos.col = 1:6))
-print(l[[2]], vp = viewport(layout.pos.row = 1, layout.pos.col = 7:12))
+print(l[[1]], vp = viewport(layout.pos.row = 1, layout.pos.col = 1:12))
+print(l[[2]], vp = viewport(layout.pos.row = 2, layout.pos.col = 1:12))
 
 dev.off()
 
@@ -700,31 +700,25 @@ p <- gather(unique_io, "rates", "value", 4:6)
 q <- gather(unique_nonio, "rates", "value", 4:6)
 ggplot() + geom_violin(data = p, aes(x = rates, y=value), fill = "red", alpha = 0.5) + geom_violin(data = q, aes(x = rates, y=value), fill = "yellow", alpha = 0.5) + coord_flip() + ggtitle('Electricity Rates For Zipcodes With Only Either Investor Owned Utilities or Non-Investor Owned Utilities') 
 
-
 #2
 r <- gather(ij_df, "io_rates", "io_value", 4:6)
 r <- gather(r, "nonio_rates", "nonio_value", 7:9)
-
 s <- ggplot(r, aes(x=io_rates, y = io_value)) + geom_violin(fill = "red", alpha = 0.5)
-s <- s + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + ggtitle('Electricity Rates For Zipcodes With Both Investor Owned Utilities And Non-Investor Owned Utilities') 
-print(s)
+s + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + ggtitle('Electricity Rates For Zipcodes With Both Investor Owned Utilities And Non-Investor Owned Utilities') 
 
 
 #3  
-t <- gather(foj_df, "io_rates", "io_value", 4:6)
-t <- gather(t, "nonio_rates", "nonio_value", 7:9)
-ggplot(t, aes(x = io_value, y = io_value)) + geom_point()
 
 g <- gather(io_df, "io_rates", "io_value", 4:6)
 ggplot(g, aes(x = io_value, y = state, color = state)) + geom_point() + facet_wrap(~io_rates) + geom_jitter() + scale_x_continuous(limits=c(1,300)) 
-
+#or
 ggplot(g, aes(x = io_rates, y = io_value, color = io_rates)) + geom_point() + facet_wrap(~state) + geom_jitter() + scale_y_continuous(limits=c(1,300)) 
 
 
 #4 
 h <- gather(nonio_df, "nonio_rates", "nonio_value", 4:6)
 ggplot(h, aes(x = nonio_value, y = state, color = state)) + geom_point() + facet_wrap(~nonio_rates) + geom_jitter() + scale_x_continuous(limits=c(1,800))
-
+#or
 ggplot(h, aes(x = nonio_rates, y = nonio_value, color = nonio_rates)) + geom_point() + facet_wrap(~state) + geom_jitter() + scale_y_continuous(limits=c(1,800))
 
 #5 
@@ -746,4 +740,4 @@ h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio
 g %>% select(ZIPCODE, state, io_rates, io_value) %>% group_by(state, io_rates) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = io_rates, io_rates)) + geom_bar(stat= "identity", position=position_dodge()) + theme(axis.text.x=element_text(angle=90, size=15)) + coord_flip()
 
 
-
+#how about the average rate for areas that have both io and nonio ? How to portray them (or their mean rates) in a single graph?
