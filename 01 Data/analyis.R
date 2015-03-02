@@ -578,9 +578,108 @@ nonio_df$state <- as.factor(nonio_df$state)
 levels(nonio_df$state)
 
 
+myplot <- function(df, x) {
+  names(df) <- c("x", "n")
+  ggplot(df, aes(x=x, y=n)) + geom_point()
+}
+
 categoricals_io <- eval(parse(text=substring(getURL(URLencode('http://129.152.144.84:5001/rest/native/?query="select * from electricity_io"'), httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnFor = 'R', returnDimensions = 'True'), verbose = TRUE), 1, 2^31-1)))
 
+l <- list()
+for (i in names(io_df)) { 
+  if (i %in% categoricals_io[[1]]) {
+    a <- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query="select \\\""i"\\\", count(*) n from electricity_io group by \\\""i"\\\" "'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON', i=i), verbose = TRUE)))
+    p <- myplot(a,i)
+    print(p) 
+    l[[i]] <- p
+  }
+}
+
+png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals.png", width = 25, height = 10, units = "in", res = 72)
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(1, 12)))   
+
+print(l[[1]], vp = viewport(layout.pos.row = 1, layout.pos.col = 1:6))
+print(l[[2]], vp = viewport(layout.pos.row = 1, layout.pos.col = 7:12))
+
+dev.off()
+
+
+
+myplot1 <- function(df, x) {
+  names(df) <- c("x")
+  ggplot(df, aes(x=x)) + geom_histogram()
+}
+l <- list()
+for (i in names(io_df)) {   
+  # For details on [[...]] below, see http://stackoverflow.com/questions/1169456/in-r-what-is-the-difference-between-the-and-notations-for-accessing-the
+  if (i %in% categoricals_io[[2]]) {
+    a <- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query="select \\\""i"\\\" from electricity_io where \\\""i"\\\" is not null "'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON', i=i), verbose = TRUE)))
+    p <- myplot1(a,i)
+    print(p) 
+    l[[i]] <- p
+  }
+}
+
+png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals2.png", width = 25, height = 10, units = "in", res = 72)
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(2, 12)))   
+
+print(l[[1]], vp = viewport(layout.pos.row = 1, layout.pos.col = 1:6))
+print(l[[2]], vp = viewport(layout.pos.row = 1, layout.pos.col = 7:12))
+print(l[[3]], vp = viewport(layout.pos.row = 2, layout.pos.col = 1:6))
+print(l[[4]], vp = viewport(layout.pos.row = 2, layout.pos.col = 7:12))
+
+dev.off()
+
+
+
+
 categoricals_nonio <- eval(parse(text=substring(getURL(URLencode('http://129.152.144.84:5001/rest/native/?query="select * from electricity_nonio"'), httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnFor = 'R', returnDimensions = 'True'), verbose = TRUE), 1, 2^31-1)))
+
+
+l <- list()
+for (i in names(io_df)) { 
+  if (i %in% categoricals_nonio[[1]]) {
+    a <- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query="select \\\""i"\\\", count(*) n from electricity_nonio group by \\\""i"\\\" "'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON', i=i), verbose = TRUE)))
+    p <- myplot(a,i)
+    print(p) 
+    l[[i]] <- p
+  }
+}
+
+png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals3.png", width = 25, height = 10, units = "in", res = 72)
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(1, 12)))   
+
+print(l[[1]], vp = viewport(layout.pos.row = 1, layout.pos.col = 1:6))
+print(l[[2]], vp = viewport(layout.pos.row = 1, layout.pos.col = 7:12))
+
+dev.off()
+
+
+l <- list()
+for (i in names(nonio_df)) {   
+  # For details on [[...]] below, see http://stackoverflow.com/questions/1169456/in-r-what-is-the-difference-between-the-and-notations-for-accessing-the
+  if (i %in% categoricals_nonio[[2]]) {
+    a <- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query="select \\\""i"\\\" from electricity_nonio where \\\""i"\\\" is not null "'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON', i=i), verbose = TRUE)))
+    p <- myplot1(a,i)
+    print(p) 
+    l[[i]] <- p
+  }
+}
+
+png("/Users/Syairah/DataVisualization/DV_RProject3/00 Doc/categoricals_nonio_2.png", width = 25, height = 10, units = "in", res = 72)
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(2, 12)))   
+
+print(l[[1]], vp = viewport(layout.pos.row = 1, layout.pos.col = 1:6))
+print(l[[2]], vp = viewport(layout.pos.row = 1, layout.pos.col = 7:12))
+print(l[[3]], vp = viewport(layout.pos.row = 2, layout.pos.col = 1:6))
+print(l[[4]], vp = viewport(layout.pos.row = 2, layout.pos.col = 7:12))
+
+dev.off()
+
 
 
 # inner join
@@ -601,12 +700,13 @@ p <- gather(unique_io, "rates", "value", 4:6)
 q <- gather(unique_nonio, "rates", "value", 4:6)
 ggplot() + geom_violin(data = p, aes(x = rates, y=value), fill = "red", alpha = 0.5) + geom_violin(data = q, aes(x = rates, y=value), fill = "yellow", alpha = 0.5) + coord_flip() + ggtitle('Electricity Rates For Zipcodes With Only Either Investor Owned Utilities or Non-Investor Owned Utilities') 
 
+
 #2
 r <- gather(ij_df, "io_rates", "io_value", 4:6)
 r <- gather(r, "nonio_rates", "nonio_value", 7:9)
 
 s <- ggplot(r, aes(x=io_rates, y = io_value)) + geom_violin(fill = "red", alpha = 0.5)
-s <- s + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + + ggtitle('Electricity Rates For Zipcodes With Both Investor Owned Utilities And Non-Investor Owned Utilities') 
+s <- s + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + ggtitle('Electricity Rates For Zipcodes With Both Investor Owned Utilities And Non-Investor Owned Utilities') 
 print(s)
 
 
@@ -628,6 +728,7 @@ ggplot(h, aes(x = nonio_value, y = state, color = state)) + geom_point() + facet
 ggplot(h, aes(x = nonio_rates, y = nonio_value, color = nonio_rates)) + geom_point() + facet_wrap(~state) + geom_jitter() + scale_y_continuous(limits=c(1,800))
 
 #5 
+
 #library(scatterplot3d)
 #attach(g)
 #scatterplot3d(io_value, state,  pch=16, highlight.3d=TRUE, main = "Investor-Owned Utilities By State")
@@ -640,9 +741,9 @@ ggplot(h, aes(x = nonio_rates, y = nonio_value, color = nonio_rates)) + geom_poi
 
 #h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = mean_rate, y=mean_rate, size = state, color=state)) + geom_point() + scale_x_continuous(limits=c(1,120)) + scale_y_continuous(limits=c(1,120)) + facet_wrap(~nonio_rates)
 
-h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = nonio_rates, nonio_rates)) + geom_bar(stat= "identity", position=position_dodge()) 
+h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = nonio_rates, nonio_rates)) + geom_bar(stat= "identity", position=position_dodge()) + theme(axis.text.x=element_text(angle=90, size=15)) + coord_flip()
   
-g %>% select(ZIPCODE, state, io_rates, io_value) %>% group_by(state, io_rates) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = io_rates, io_rates)) + geom_bar(stat= "identity", position=position_dodge())
+g %>% select(ZIPCODE, state, io_rates, io_value) %>% group_by(state, io_rates) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = io_rates, io_rates)) + geom_bar(stat= "identity", position=position_dodge()) + theme(axis.text.x=element_text(angle=90, size=15)) + coord_flip()
 
 
 
