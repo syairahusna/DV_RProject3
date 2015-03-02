@@ -610,7 +610,39 @@ s <- s + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + + ggtit
 print(s)
 
 
-#3
+#3  
+t <- gather(foj_df, "io_rates", "io_value", 4:6)
+t <- gather(t, "nonio_rates", "nonio_value", 7:9)
+ggplot(t, aes(x = io_value, y = io_value)) + geom_point()
+
+g <- gather(io_df, "io_rates", "io_value", 4:6)
+ggplot(g, aes(x = io_value, y = state, color = state)) + geom_point() + facet_wrap(~io_rates) + geom_jitter() + scale_x_continuous(limits=c(1,300)) 
+
+ggplot(g, aes(x = io_rates, y = io_value, color = io_rates)) + geom_point() + facet_wrap(~state) + geom_jitter() + scale_y_continuous(limits=c(1,300)) 
 
 
-                 
+#4 
+h <- gather(nonio_df, "nonio_rates", "nonio_value", 4:6)
+ggplot(h, aes(x = nonio_value, y = state, color = state)) + geom_point() + facet_wrap(~nonio_rates) + geom_jitter() + scale_x_continuous(limits=c(1,800))
+
+ggplot(h, aes(x = nonio_rates, y = nonio_value, color = nonio_rates)) + geom_point() + facet_wrap(~state) + geom_jitter() + scale_y_continuous(limits=c(1,800))
+
+#5 
+#library(scatterplot3d)
+#attach(g)
+#scatterplot3d(io_value, state,  pch=16, highlight.3d=TRUE, main = "Investor-Owned Utilities By State")
+
+#g %>% select(ZIPCODE, state, io_rates, io_value) %>% group_by(state, io_rates) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = mean_rate, y=mean_rate, size = state, color=state)) + geom_point() + facet_wrap(~io_rates)
+ 
+#g %>% select(ZIPCODE, state, io_rates, io_value) %>% group_by(state, io_rates) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = mean_rate, y=mean_rate, size = state, color=state)) + geom_point() + scale_x_continuous(limits=c(1,70)) + scale_y_continuous(limits=c(1,70)) + facet_wrap(~io_rates)
+
+#h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = mean_rate, y=mean_rate, size = state, color=state)) + geom_point() + facet_wrap(~nonio_rates)
+
+#h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = mean_rate, y=mean_rate, size = state, color=state)) + geom_point() + scale_x_continuous(limits=c(1,120)) + scale_y_continuous(limits=c(1,120)) + facet_wrap(~nonio_rates)
+
+h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = nonio_rates, nonio_rates)) + geom_bar(stat= "identity", position=position_dodge()) 
+  
+g %>% select(ZIPCODE, state, io_rates, io_value) %>% group_by(state, io_rates) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = io_rates, io_rates)) + geom_bar(stat= "identity", position=position_dodge())
+
+
+
