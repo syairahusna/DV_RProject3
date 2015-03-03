@@ -1,0 +1,1 @@
+ij_df %>% gather("io_rates", "io_value", 4:6)  %>% gather("nonio_rates", "nonio_value", 7:9)  %>% ggplot(aes(x=io_rates, y = io_value)) + geom_violin(fill = "red", alpha = 0.5) + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + ggtitle('Electricity Rates For Zipcodes With Both Investor Owned Utilities And Non-Investor Owned Utilities') 

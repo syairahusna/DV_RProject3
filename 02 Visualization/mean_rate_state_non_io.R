@@ -1,1 +1,0 @@
-h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = nonio_rates, nonio_rates)) + geom_bar(stat= "identity", position=position_dodge()) + theme(axis.text.x=element_text(angle=90, size=15)) + coord_flip()

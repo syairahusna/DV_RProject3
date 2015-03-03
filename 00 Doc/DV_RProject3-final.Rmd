@@ -6,6 +6,11 @@ date: "March 4, 2015"
 output: html_document
 ---
 
+Investor Owned Utilities (IOU) is defined as utilities that are owned by private companies instead of state or federal public agency (EnergyVortex.com). Both datasets used in this projects are made public by the National Renewable Energy Laboratory (NREL) and Ventyx in February 2011. The datasets contain the average electricity rates for residential, commercial and industrial purposes for each utility.
+
+**Loading the Data Set from Oracle Database Into R Studio**
+
+The datasets pulled from the Oracle database include the average electricity rates for residential, commercial and industrial purposes for each utility, details about the companies that provide the utilities as well as the zipcodes where the utilities are located. 
 
 ```{r, include=FALSE, results = "hide"}
 source("../01 Data/packages.R", echo = FALSE)
@@ -15,8 +20,10 @@ source("../01 Data/packages.R", echo = FALSE)
 source("../01 Data/io_df.R", echo = FALSE)
 ```
 
+We realized that the datasets lack one valuable information - a column that contains the states where the utilities are located. Nonetheless, with the information that we have on zipcodes, we are able to create the 'state' column and identify the states based on the corresponding zipcodes. Thus, we added 'state' column on both datasets.
+
 ```{r}
-source("../01 Data/adding_io_state.R", echo = FALSE)
+source("../01 Data/adding_io_state.R", echo = TRUE)
 ```
 
 ```{r}
@@ -25,105 +32,116 @@ source("../01 Data/non_io_df.R", echo = FALSE)
 
 ```{r, include=FALSE, results = "hide"}
 source("../01 Data/adding_non_io_state.R", echo = FALSE)
+nonio_df %>% tbl_df
+```
+
+Now, both `io_df` and `nonio_df` have seven variables in their datasets. To explore the datasets, we load the dataframe from Oracle but set the `returnDimensions = 'True'` to recognize how many qualitative and quantitative variables that are present in the datasets. Then, we proceed to plot all the variables againsts the count of their own records so that we are able view the distribution of records for each of the variable. 
+
+The following `myplot` function entails the plotting of categorical variable in the form of point plots while `myplot1` plots the quantitative variables in the form of histograms
+
+```{r, message=FALSE}
+source("../01 Data/plot_function_qualitative.R", echo = TRUE)
 ```
 
 ```{r}
-source("../01 Data/plot_function_qualitative.R", echo = FALSE)
+source("../01 Data/categoricals_io.R", echo = TRUE)
 ```
 
 ```{r}
-source("../01 Data/categoricals_io.R", echo = FALSE)
+source("../03 Visualizations/io_qualitative.R", echo = TRUE)
 ```
 
 ```{r}
-source("../02 Visualization/io_qualitative.R", echo = FALSE)
+source("../03 Visualizations/storing_io_qualitative.R", echo = TRUE)
+```
+
+
+```{r, message=FALSE}
+source("../01 Data/plot_function_quantitative.R", echo = TRUE)
 ```
 
 ```{r}
-source("../02 Visualization/storing_io_qualitative.R", echo = FALSE)
+source("../03 Visualizations/io_quantitative.R", echo = TRUE)
 ```
 
 ```{r}
-source("../01 Data/plot_function_quantitative.R", echo = FALSE)
+source("../03 Visualizations/storing_io_quantitative.R", echo = TRUE)
+```
+
+The same steps above are applied to non-investor owned utilities dataset. The following shows the visualizations produced using `myplot` and `myplot1` functions on 'nonio_df' dataset.
+
+```{r}
+source("../01 Data/categoricals_non_io.R", echo = TRUE)
 ```
 
 ```{r}
-source("../02 Visualization/io_quantitative.R", echo = FALSE)
+source("../03 Visualizations/non_io_qualitative.R", echo = FALSE)
 ```
 
 ```{r}
-source("../02 Visualization/storing_io_quantitative.R", echo = FALSE)
+source("../03 Visualizations/storing_non_io_qualitative.R", echo = FALSE)
 ```
 
 ```{r}
-source("../01 Data/categoricals_non_io.R", echo = FALSE)
+source("../03 Visualizations/non_io_quantitative.R", echo = FALSE)
 ```
 
 ```{r}
-source("../02 Visualization/non_io_qualitative.R", echo = FALSE)
+source("../03 Visualizations/storing_non_io_quantitative.R", echo = FALSE)
 ```
-
-```{r}
-source("../02 Visualization/storing_non_io_qualitative.R", echo = FALSE)
-```
-
-
-```{r}
-source("../02 Visualization/non_io_quantitative.R", echo = FALSE)
-```
-
-```{r}
-source("../02 Visualization/storing_non_io_quantitative.R", echo = FALSE)
-```
-
 
 **Data Wrangling**
-Using join operations
+Using the `dplyr` package, we can combine both datasets and yield quite valuable information.
+
+For instance, the following code combines both datasets using inner join, which matches records based on their zipcode areas. It is important to note that we avoid using `"COMPANY NAME"` and `"COMPANY ID"` for comparing the two datasets. This is because a utility company can either be a private enterprise or a government-run agency but it could not be both of the entities.
 
 ```{r}
-source("../01 Data/inner_join.R", echo = FALSE)
-#View(ij_df)
+source("../01 Data/inner_join.R", echo = TRUE)
 ```
+
+The result of an inner join gives us the areas that have both investor owned and non-investor owned utilities. Notice in the table that there are some duplicates in either IO utilities on non-IO utilities - this may indicate that those areas have either more than one IO or non-IO utilities.
+
+The following code demonstrates the full outer join operation done on both datasets.
 
 ```{r}
 source("../01 Data/full_outer_join.R", echo = FALSE)
-#View(foj_df)
 ```
+The full outer join operations simply gives all the IOUs and non-IOUs for all the zipcodes available in both datasets. 
 
+Anti join is an operation that returns the records that only exists in one dataset but not in the other. For instance, the following anti join gives us areas that only have investor owned utilities.
 ```{r}
 source("../01 Data/unique_io.R", echo = FALSE)
-#View(unique_io)
 ```
 
+Meanwhile, the following anti join gives us areas that only have non-investor owned utilities.
 ```{r}
 source("../01 Data/unique_non_io.R", echo = FALSE)
-#View(unique_nonio)
 ```
 
 
-Visualizations From Wrangled Datasets
+**Visualizations From Wrangled Datasets**
 
-```{r}
-source("../02 Visualization/areas with_only_io_or_nonio.R", echo = TRUE)
+```{r, warning=FALSE}
+source("../03 Visualizations/areas with_only_io_or_nonio.R", echo = TRUE)
 ```
 
-```{r}
-source("../02 Visualization/areas_with_both_io_and_nonio.R", echo = TRUE)
+```{r, warning=FALSE}
+source("../02 Data Wrangling/areas_with_both_io_and_nonio.R", echo = TRUE)
 ```
 
-```{r}
-source("../02 Visualization/distribution_rates_by_state.R", echo = TRUE)
+```{r, warning=FALSE}
+source("../02 Data Wrangling/distribution_rates_by_state.R", echo = TRUE)
 ```
 
-```{r}
-source("../02 Visualization/distribution_nonio_rates_by_state.R", echo = TRUE)
+```{r, warning=FALSE}
+source("../02 Data Wrangling/distribution_nonio_rates_by_state.R", echo = TRUE)
 ```
 
-```{r}
-source("../02 Visualization/mean_rate_state_io.R", echo = TRUE)
+```{r, warning=FALSE}
+source("../02 Data Wrangling/mean_rate_state_io.R", echo = TRUE)
 ```
 
-```{r}
-source("../02 Visualization/mean_rate_state_non_io.R", echo = TRUE)
+```{r, warning=FALSE}
+source("../02 Data Wrangling/mean_rate_state_non_io.R", echo = TRUE)
 ```
 

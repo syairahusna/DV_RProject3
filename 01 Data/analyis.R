@@ -702,22 +702,17 @@ q <- gather(unique_nonio, "rates", "value", 4:6)
 ggplot() + geom_violin(data = p, aes(x = rates, y=value), fill = "red", alpha = 0.5) + geom_violin(data = q, aes(x = rates, y=value), fill = "yellow", alpha = 0.5) + coord_flip() + ggtitle('Electricity Rates For Zipcodes With Only Either Investor Owned Utilities or Non-Investor Owned Utilities') 
 
 #2
-r <- gather(ij_df, "io_rates", "io_value", 4:6)
-r <- gather(r, "nonio_rates", "nonio_value", 7:9)
-s <- ggplot(r, aes(x=io_rates, y = io_value)) + geom_violin(fill = "red", alpha = 0.5)
-s + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + ggtitle('Electricity Rates For Zipcodes With Both Investor Owned Utilities And Non-Investor Owned Utilities') 
-
+ij_df %>% gather("io_rates", "io_value", 4:6)  %>% gather("nonio_rates", "nonio_value", 7:9)  %>% ggplot(aes(x=io_rates, y = io_value)) + geom_violin(fill = "red", alpha = 0.5) + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + ggtitle('Electricity Rates For Zipcodes With Both Investor Owned Utilities And Non-Investor Owned Utilities') 
 
 #3  
-g <- gather(io_df, "io_rates", "io_value", 4:6)
-ggplot(g, aes(x = io_value, y = state, color = state)) + geom_point() + facet_wrap(~io_rates) + geom_jitter() + scale_x_continuous(limits=c(1,300)) 
+io_df %>% gather("io_rates", "io_value", 4:6) %>% ggplot(aes(x = io_value, y = state, color = state)) + geom_point() + facet_wrap(~io_rates) + geom_jitter() + scale_x_continuous(limits=c(1,300)) 
 #or
 ggplot(g, aes(x = io_rates, y = io_value, color = io_rates)) + geom_point() + facet_wrap(~state) + geom_jitter() + scale_y_continuous(limits=c(1,300)) 
 
 
+
 #4 
-h <- gather(nonio_df, "nonio_rates", "nonio_value", 4:6)
-ggplot(h, aes(x = nonio_value, y = state, color = state)) + geom_point() + facet_wrap(~nonio_rates) + geom_jitter() + scale_x_continuous(limits=c(1,800))
+nonio_df %>%  gather("nonio_rates", "nonio_value", 4:6)  %>% ggplot(aes(x = nonio_value, y = state, color = state)) + geom_point() + facet_wrap(~nonio_rates) + geom_jitter() + scale_x_continuous(limits=c(1,800))
 #or
 ggplot(h, aes(x = nonio_rates, y = nonio_value, color = nonio_rates)) + geom_point() + facet_wrap(~state) + geom_jitter() + scale_y_continuous(limits=c(1,800))
 
@@ -735,9 +730,9 @@ ggplot(h, aes(x = nonio_rates, y = nonio_value, color = nonio_rates)) + geom_poi
 
 #h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = mean_rate, y=mean_rate, size = state, color=state)) + geom_point() + scale_x_continuous(limits=c(1,120)) + scale_y_continuous(limits=c(1,120)) + facet_wrap(~nonio_rates)
 
-h %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = nonio_rates, nonio_rates)) + geom_bar(stat= "identity", position=position_dodge()) + theme(axis.text.x=element_text(angle=90, size=15)) + coord_flip()
+nonio_df %>%  gather("nonio_rates", "nonio_value", 4:6) %>% select(ZIPCODE, state, nonio_rates, nonio_value) %>% group_by(state, nonio_rates) %>% summarise(mean_rate = mean(nonio_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = nonio_rates, nonio_rates)) + geom_bar(stat= "identity", position=position_dodge()) + theme(axis.text.x=element_text(angle=90, size=15)) + coord_flip()
   
-g %>% select(ZIPCODE, state, io_rates, io_value) %>% group_by(state, io_rates) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = io_rates, io_rates)) + geom_bar(stat= "identity", position=position_dodge()) + theme(axis.text.x=element_text(angle=90, size=15)) + coord_flip()
+io_df %>% gather("io_rates", "io_value", 4:6)  %>% select(ZIPCODE, state, io_rates, io_value) %>% group_by(state, io_rates) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = io_rates, io_rates)) + geom_bar(stat= "identity", position=position_dodge()) + theme(axis.text.x=element_text(angle=90, size=15)) + coord_flip()
 
 
 #how about the average rate for areas that have both io and nonio ? How to portray them (or their mean rates) in a single graph?

@@ -284,3 +284,5 @@ nonio_df$state <- as.factor(nonio_df$state)
 
 #determine all levels
 levels(nonio_df$state)
+
+

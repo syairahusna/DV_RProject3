@@ -283,3 +283,5 @@ io_df$state <- as.factor(io_df$state)
 
 #determine all levels
 levels(io_df$state)
+
+io_df %>% tbl_df
