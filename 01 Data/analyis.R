@@ -680,20 +680,21 @@ print(l[[4]], vp = viewport(layout.pos.row = 2, layout.pos.col = 7:12))
 
 dev.off()
 
-
-
 # inner join
 ij_df <- inner_join(io_df, nonio_df, by = c("ZIPCODE"))
+View(ij_df)
 
 #full outer join
 foj_df <- full_join(io_df, nonio_df, by = c("ZIPCODE"))
+View(foj_df)
 
 # areas where there are only io
 unique_io <- anti_join(io_df, nonio_df, by = c("ZIPCODE"))
+View(unique_io)
 
 # areas where there are only non-io
 unique_nonio <- anti_join(nonio_df, io_df, by = c("ZIPCODE"))
-
+View(unique_nonio)
 
 #1
 p <- gather(unique_io, "rates", "value", 4:6) 
@@ -708,7 +709,6 @@ s + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + ggtitle('Ele
 
 
 #3  
-
 g <- gather(io_df, "io_rates", "io_value", 4:6)
 ggplot(g, aes(x = io_value, y = state, color = state)) + geom_point() + facet_wrap(~io_rates) + geom_jitter() + scale_x_continuous(limits=c(1,300)) 
 #or

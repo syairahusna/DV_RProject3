@@ -1,0 +1,129 @@
+---
+title: 'DV_RProject3 : Electricity Rates For Investor Owned and Non-Investor Owned
+  Utilities'
+author: "Syairah Ridzuan, Madeline Packard, Arthur DeVitalis"
+date: "March 4, 2015"
+output: html_document
+---
+
+
+```{r, include=FALSE, results = "hide"}
+source("../01 Data/packages.R", echo = FALSE)
+```
+
+```{r}
+source("../01 Data/io_df.R", echo = FALSE)
+```
+
+```{r}
+source("../01 Data/adding_io_state.R", echo = FALSE)
+```
+
+```{r}
+source("../01 Data/non_io_df.R", echo = FALSE)
+```
+
+```{r, include=FALSE, results = "hide"}
+source("../01 Data/adding_non_io_state.R", echo = FALSE)
+```
+
+```{r}
+source("../01 Data/plot_function_qualitative.R", echo = FALSE)
+```
+
+```{r}
+source("../01 Data/categoricals_io.R", echo = FALSE)
+```
+
+```{r}
+source("../02 Visualization/io_qualitative.R", echo = FALSE)
+```
+
+```{r}
+source("../02 Visualization/storing_io_qualitative.R", echo = FALSE)
+```
+
+```{r}
+source("../01 Data/plot_function_quantitative.R", echo = FALSE)
+```
+
+```{r}
+source("../02 Visualization/io_quantitative.R", echo = FALSE)
+```
+
+```{r}
+source("../02 Visualization/storing_io_quantitative.R", echo = FALSE)
+```
+
+```{r}
+source("../01 Data/categoricals_non_io.R", echo = FALSE)
+```
+
+```{r}
+source("../02 Visualization/non_io_qualitative.R", echo = FALSE)
+```
+
+```{r}
+source("../02 Visualization/storing_non_io_qualitative.R", echo = FALSE)
+```
+
+
+```{r}
+source("../02 Visualization/non_io_quantitative.R", echo = FALSE)
+```
+
+```{r}
+source("../02 Visualization/storing_non_io_quantitative.R", echo = FALSE)
+```
+
+
+**Data Wrangling**
+Using join operations
+
+```{r}
+source("../01 Data/inner_join.R", echo = FALSE)
+#View(ij_df)
+```
+
+```{r}
+source("../01 Data/full_outer_join.R", echo = FALSE)
+#View(foj_df)
+```
+
+```{r}
+source("../01 Data/unique_io.R", echo = FALSE)
+#View(unique_io)
+```
+
+```{r}
+source("../01 Data/unique_non_io.R", echo = FALSE)
+#View(unique_nonio)
+```
+
+
+Visualizations From Wrangled Datasets
+
+```{r}
+source("../02 Visualization/areas with_only_io_or_nonio.R", echo = TRUE)
+```
+
+```{r}
+source("../02 Visualization/areas_with_both_io_and_nonio.R", echo = TRUE)
+```
+
+```{r}
+source("../02 Visualization/distribution_rates_by_state.R", echo = TRUE)
+```
+
+```{r}
+source("../02 Visualization/distribution_nonio_rates_by_state.R", echo = TRUE)
+```
+
+```{r}
+source("../02 Visualization/mean_rate_state_io.R", echo = TRUE)
+```
+
+```{r}
+source("../02 Visualization/mean_rate_state_non_io.R", echo = TRUE)
+```
+

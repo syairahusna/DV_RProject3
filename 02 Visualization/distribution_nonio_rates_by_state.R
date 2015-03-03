@@ -1,0 +1,2 @@
+h <- gather(nonio_df, "nonio_rates", "nonio_value", 4:6)
+ggplot(h, aes(x = nonio_value, y = state, color = state)) + geom_point() + facet_wrap(~nonio_rates) + geom_jitter() + scale_x_continuous(limits=c(1,800))
