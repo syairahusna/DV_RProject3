@@ -8,7 +8,7 @@ output: html_document
 
 Investor Owned Utilities (IOU) is defined as utilities that are owned by private companies instead of state or federal public agency (EnergyVortex.com). Both datasets used in this projects are made public by the National Renewable Energy Laboratory (NREL) and Ventyx in February 2011. The datasets contain the average electricity rates for residential, commercial and industrial purposes for each utility.
 
-**Loading the Data Set from Oracle Database Into R Studio**
+##Loading the Data Set from Oracle Database Into R Studio
 
 The datasets pulled from the Oracle database include the average electricity rates for residential, commercial and industrial purposes for each utility, details about the companies that provide the utilities as well as the zipcodes where the utilities are located. 
 
@@ -42,7 +42,7 @@ The following `myplot` function entails the plotting of categorical variable in 
 ```{r, message=FALSE}
 source("../01 Data/plot_function_qualitative.R", echo = TRUE)
 ```
-It is worth mentioning that we purposely remove the labels on the x-axes for all qualitative variables and this is because there are a lot of distinct datapoints and they eventually made the axes become unreadable. In addition, company name and company id give us less interesting insights to the project compared to the number of utilities they manage which could possibly be across many states.
+It is worth mentioning that we purposely remove the labels on the x-axes for all qualitative variables. This is because there are a lot of distinct datapoints and they eventually made the axes become unreadable. In addition, company name and company id give us less interesting insights compared to the number of utilities they manage which could possibly be across many states.
 
 ```{r}
 source("../01 Data/categoricals_io.R", echo = TRUE)
@@ -90,8 +90,7 @@ source("../03 Visualizations/non_io_quantitative.R", echo = TRUE)
 source("../03 Visualizations/storing_non_io_quantitative.R", echo = TRUE)
 ```
 
-
-**Joining Datasets**
+##Joining Datasets
 
 Using the `dplyr` package, we can combine both datasets and yield quite valuable information.
 
@@ -101,53 +100,77 @@ For instance, the following code combines both datasets using inner join, which 
 source("../01 Data/inner_join.R", echo = TRUE)
 ```
 
-The result of an inner join gives us the areas that have both investor owned and non-investor owned utilities. Notice in the table that there are some duplicates in either IO utilities on non-IO utilities - this may indicate that those areas have either more than one IO or non-IO utilities.
+The result of an inner join gives us the areas that have both investor owned (IO) and non-investor owned utilities. Notice in the table that there are some duplicates in either IO utilities on non-IO utilities - this may indicate that those areas have either more than one IO or non-IO utilities.
+
 
 The following code demonstrates the full outer join operation done on both datasets.
 
 ```{r}
 source("../01 Data/full_outer_join.R", echo = TRUE)
 ```
-The full outer join operations simply gives all the IOUs and non-IOUs for all the zipcodes available in both datasets. 
 
-Anti join is an operation that returns the records that only exists in one dataset but not in the other. For instance, the following anti join gives us areas that only have investor owned utilities.
+The full outer join operation simply gives all the IOUs and non-IOUs for all the zipcodes available in both datasets. This is very useful for viewing a complete dataset on electricity rate regardless of the provider. However, in this project, we are more interested to compare the electricity rates between the two types of provider.
+
+Anti join is an operation that returns the records that only exists in one dataset but not in the other. For instance, the anti join below gives us areas that only have investor owned utilities (IOU). 
 ```{r}
 source("../01 Data/unique_io.R", echo = TRUE)
 ```
 
-Meanwhile, the following anti join gives us areas where electricity are only provided by non-investor owned utilities.
+Meanwhile, the following anti join gives us areas where electricity are only provided by non-investor owned utilities (non-IOU).
 ```{r}
 source("../01 Data/unique_non_io.R", echo = TRUE)
 ```
 
 
-**Visualizations From Wrangled Datasets**
+##Visualizations From Wrangled Datasets
 
-The join operations gave us some interesting visualization ideas. We began by comparing the rates for areas that are only supplied either IOUs or non-IOUs. To do this, we have to use the results from the anti joins that we did earlier, which yield `unique_io` and `unique_nonio`. We chose to visualize them using violin plot.
+The join operations gave us some interesting visualization ideas. We begin by comparing the rates for areas that are only supplied by either IOUs or non-IOUs. To do this, we have to use the results from the anti joins that we did earlier, which yield `unique_io` and `unique_nonio`. We chose to visualize them using violin plot.
 
 ```{r, warning=FALSE, out.width = '900px', out.height = '500px'}
 source("../02 Data Wrangling/areas with_only_io_or_nonio.R", echo = TRUE)
 ```
 
-Then, we pivot our focus to areas that have both IOUs and non-IOUs. Again, we use violin plot to visualize so that it will be much easier to compare with the previous plot.
+Based on the plot above, it is interesting to note that areas with only investor owned utilities have wider distribution, as suggested by the length of the red plot, compared to areas with only non-investor owned utilities which are more condensed, as depicted by the larger vertical width of the blue plot, and this comparison seems to hold for all type of rates. However, it is curious to see that distributions of rates for non-investor owned utilities are very skewed 
+to the right of the plot and you will later recognize the reason behind this as we get to the later visualizations.
+
+We pivot our focus to areas that have both IOUs and non-IOUs. Again, we use violin plot to visualize so that it will be much easier to compare with the previous plot.
+
 ```{r, warning=FALSE, out.width = '700px', out.height = '500px' }
 source("../02 Data Wrangling/areas_with_both_io_and_nonio.R", echo = TRUE)
 ```
 
+There are a few interesting insights in the plot above: firstly, for non-investor owned utilities, notice that the distributions for all the rates are very similar. Comparing the distribution of rates between IOU and non-IOU, it can be seen that IOU rates are less varied that the non-IOU rates. What's more surprising to us is that IOUs have much lower industrial rate than the non-IOUs; the interquartile range of IOU's industrial rate is below the first 50% of the non-IOU's industrial rate distribution. 
+
+From the first two plots, it is evident that electricity rates for the investor owned utilities (IOU) tend to vary less (in terms of distribution) in areas where both types of utilities exist. In fact, in areas where both IOUs and non-IOUs exist, the electricity rates for IOUs tend to be lower then those provided by non-IOUs.
+
+In the previous two violin plots, we can observe that there are many outliers in the distribution. We seek to discover which areas have significantly higher electricity rates. However, since there are many zipcodes, we decided to use state instead so that we are able to intepret the graph more effectively. Thus, we plot the distribution rates againsts their respective states according to the type of rate for investor owned utilities.
 
 ```{r, warning=FALSE, out.width = '900px', out.height = '500px'}
 source("../02 Data Wrangling/distribution_rates_by_state.R", echo = TRUE)
 ```
 
+Based on the plot above, it can be seen that Hawaii have significantly higher electricity rates for all types of rate compared to other states. It is also interesting to note here that the distribution between the three types of rate in within a state are quite similar for all states. 
+
+The graph below plots the distribution rates of states according to the type of rate for non-investor owned utilities.
+
 ```{r, warning=FALSE, out.width = '900px', out.height = '700px'}
 source("../02 Data Wrangling/distribution_nonio_rates_by_state.R", echo = TRUE)
 ```
 
+Comparing the graph above with the previous graph on IOUs, it can be seen that non-IOUs provided electricity at much lower costs for all three types of rates, compared to IOUs, in almost all states, with the exception of Alaska. In fact, looking at Alaska and glancing at the scale of 'Value ($)' on the horizontal axis tell us what makes the distribution rate of non-IOUs quite skewed on the first violin plot above.
+
+Note that state-by-state comparison is not applicable to states like Delaware which does not have non-IOUs and Armed Forces Pacific which do not have IOUs.
+
+The following bar graphs seek to display IOUs' average electricty costs for all types of rate for each state.
 ```{r, warning=FALSE, out.width = '900px', out.height = '700px' }
 source("../02 Data Wrangling/mean_rate_state_io.R", echo = TRUE)
 ```
 
+It can be observed from the graph above that Hawaii has the highest mean cost for all types of electricity. Accessibility issue may be the cause of such expensive electricity rate. Setting Hawaii aside, California, Delaware and Florida have the highest electricity cost for residential areas. Meanwhile, California, Delaware and Washington D.C. have the most expensive electrity cost for commercial purpose. For industrial purposes, California, Florida and Massachusetts have the highest electricity rates compared to all the states.
+
+The following graph shows non-IOUs' average electricty costs for all types of rate for each state.
 ```{r, warning=FALSE, out.width = '900px', out.height = '700px' }
 source("../02 Data Wrangling/mean_rate_state_non_io.R", echo = TRUE)
 ```
 
+Alaska have significantly higher electricity cost for commercial and residential purposes. We decided to treat Guam and Armed Forces Pacific as special cases because there may be many overhead costs that needed to be covered in order to provide electricity in these places. So setting them aside, we can see that Washington D.C. has the highest cost for commercial and residential purposes while California has the most expensive electricity rate for industrial purposes.
