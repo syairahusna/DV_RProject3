@@ -590,7 +590,6 @@ for (i in names(io_df)) {
   if (i %in% categoricals_io[[1]]) {
     a <- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query="select \\\""i"\\\", count(*) n from electricity_io group by \\\""i"\\\" "'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON', i=i), verbose = TRUE)))
     p <- myplot(a,i)
-    print(p) 
     l[[i]] <- p
   }
 }
@@ -616,7 +615,6 @@ for (i in names(io_df)) {
   if (i %in% categoricals_io[[2]]) {
     a <- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query="select \\\""i"\\\" from electricity_io where \\\""i"\\\" is not null "'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON', i=i), verbose = TRUE)))
     p <- myplot1(a,i)
-    print(p) 
     l[[i]] <- p
   }
 }
@@ -643,7 +641,6 @@ for (i in names(io_df)) {
   if (i %in% categoricals_nonio[[1]]) {
     a <- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query="select \\\""i"\\\", count(*) n from electricity_nonio group by \\\""i"\\\" "'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON', i=i), verbose = TRUE)))
     p <- myplot(a,i)
-    print(p) 
     l[[i]] <- p
   }
 }
@@ -664,7 +661,6 @@ for (i in names(nonio_df)) {
   if (i %in% categoricals_nonio[[2]]) {
     a <- data.frame(fromJSON(getURL(URLencode('129.152.144.84:5001/rest/native/?query="select \\\""i"\\\" from electricity_nonio where \\\""i"\\\" is not null "'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521:ORCL', USER='C##cs329e_nm22335', PASS='orcl_nm22335', MODE='native_mode', MODEL='model', returnDimensions = 'False', returnFor = 'JSON', i=i), verbose = TRUE)))
     p <- myplot1(a,i)
-    print(p) 
     l[[i]] <- p
   }
 }
@@ -697,9 +693,18 @@ unique_nonio <- anti_join(nonio_df, io_df, by = c("ZIPCODE"))
 View(unique_nonio)
 
 #1
+#getting both on top of each other
+#p <- gather(unique_io, "rates", "value", 4:6) 
+#q <- gather(unique_nonio, "rates", "value", 4:6)
+#ggplot() + geom_violin(data = p, aes(x = rates, y=value), fill = "red", alpha = 0.5) + geom_violin(data = q, aes(x = rates, y=value), fill = "yellow", alpha = 0.5) + coord_flip() + ggtitle('Electricity Rates For Zipcodes With Only Either Investor Owned Utilities or Non-Investor Owned Utilities') 
+
 p <- gather(unique_io, "rates", "value", 4:6) 
 q <- gather(unique_nonio, "rates", "value", 4:6)
-ggplot() + geom_violin(data = p, aes(x = rates, y=value), fill = "red", alpha = 0.5) + geom_violin(data = q, aes(x = rates, y=value), fill = "yellow", alpha = 0.5) + coord_flip() + ggtitle('Electricity Rates For Zipcodes With Only Either Investor Owned Utilities or Non-Investor Owned Utilities') 
+p["sole_ownership"] <- "Investor Owned Utilities"
+q["sole_ownership"] <- "Non-Investor Owned Utilities"
+uniques <- bind_rows(p,q)
+uniques %>% select(rates, value, sole_ownership) %>% group_by(sole_ownership) %>% ggplot(aes(x = rates, y = value, fill = sole_ownership)) + geom_violin() + coord_flip() + ggtitle('Electricity Rates For Areas That Are Catered By Either Investor Owned Utilities or Non-Investor Owned Utilities') 
+
 
 #2
 ij_df %>% gather("io_rates", "io_value", 4:6)  %>% gather("nonio_rates", "nonio_value", 7:9)  %>% ggplot(aes(x=io_rates, y = io_value)) + geom_violin(fill = "red", alpha = 0.5) + geom_violin(aes(y=nonio_value), fill = "yellow", alpha = 0.4) + ggtitle('Electricity Rates For Zipcodes With Both Investor Owned Utilities And Non-Investor Owned Utilities') 

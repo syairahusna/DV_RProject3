@@ -20,7 +20,7 @@ source("../01 Data/packages.R", echo = FALSE)
 source("../01 Data/io_df.R", echo = FALSE)
 ```
 
-We realized that the datasets lack one valuable information - a column that contains the states where the utilities are located. Nonetheless, with the information that we have on zipcodes, we are able to create the 'state' column and identify the states based on the corresponding zipcodes. Thus, we added 'state' column on both datasets.
+We realized that the datasets lack one valuable information which is a column that contains the states where the utilities are located. Nonetheless, with the information that we have on zipcodes, we are able to create the 'state' column and identify the states based on the corresponding zipcodes. Thus, we added 'state' column on both datasets.
 
 ```{r}
 source("../01 Data/adding_io_state.R", echo = TRUE)
@@ -37,60 +37,62 @@ nonio_df %>% tbl_df
 
 Now, both `io_df` and `nonio_df` have seven variables in their datasets. To explore the datasets, we load the dataframe from Oracle but set the `returnDimensions = 'True'` to recognize how many qualitative and quantitative variables that are present in the datasets. Then, we proceed to plot all the variables againsts the count of their own records so that we are able view the distribution of records for each of the variable. 
 
-The following `myplot` function entails the plotting of categorical variable in the form of point plots while `myplot1` plots the quantitative variables in the form of histograms
+The following `myplot` function entails the plotting of categorical variable in the form of point plots while `myplot1` function plots the quantitative variables in the form of histograms.
 
 ```{r, message=FALSE}
 source("../01 Data/plot_function_qualitative.R", echo = TRUE)
 ```
+It is worth mentioning that we purposely remove the labels on the x-axes for all qualitative variables and this is because there are a lot of distinct datapoints and they eventually made the axes become unreadable. In addition, company name and company id give us less interesting insights to the project compared to the number of utilities they manage which could possibly be across many states.
 
 ```{r}
 source("../01 Data/categoricals_io.R", echo = TRUE)
 ```
 
-```{r}
+```{r, message=FALSE}
 source("../03 Visualizations/io_qualitative.R", echo = TRUE)
 ```
 
-```{r}
-source("../03 Visualizations/storing_io_qualitative.R", echo = TRUE)
+```{r, message=FALSE, out.width = '1000px', out.height = '700px'}
+source("../03 Visualizations/storing_io_qualitative.R", echo = FALSE)
 ```
-
 
 ```{r, message=FALSE}
 source("../01 Data/plot_function_quantitative.R", echo = TRUE)
 ```
 
-```{r}
+```{r, message=FALSE}
 source("../03 Visualizations/io_quantitative.R", echo = TRUE)
 ```
 
-```{r}
-source("../03 Visualizations/storing_io_quantitative.R", echo = TRUE)
+```{r, message=FALSE, out.width = '1000px', out.height = '700px'}
+source("../03 Visualizations/storing_io_quantitative.R", echo = FALSE)
 ```
 
 The same steps above are applied to non-investor owned utilities dataset. The following shows the visualizations produced using `myplot` and `myplot1` functions on 'nonio_df' dataset.
 
-```{r}
+```{r, include=FALSE}
 source("../01 Data/categoricals_non_io.R", echo = TRUE)
 ```
 
-```{r}
-source("../03 Visualizations/non_io_qualitative.R", echo = FALSE)
+```{r, message=FALSE, include=FALSE}
+source("../03 Visualizations/non_io_qualitative.R", echo = TRUE)
 ```
 
-```{r}
-source("../03 Visualizations/storing_non_io_qualitative.R", echo = FALSE)
+```{r, message=FALSE, out.width = '1000px', out.height = '1500px'}
+source("../03 Visualizations/storing_non_io_qualitative.R", echo = TRUE)
 ```
 
-```{r}
-source("../03 Visualizations/non_io_quantitative.R", echo = FALSE)
+```{r, message=FALSE, include=FALSE}
+source("../03 Visualizations/non_io_quantitative.R", echo = TRUE)
 ```
 
-```{r}
-source("../03 Visualizations/storing_non_io_quantitative.R", echo = FALSE)
+```{r, message=FALSE, out.width = '900px', out.height = '700px'}
+source("../03 Visualizations/storing_non_io_quantitative.R", echo = TRUE)
 ```
 
-**Data Wrangling**
+
+**Joining Datasets**
+
 Using the `dplyr` package, we can combine both datasets and yield quite valuable information.
 
 For instance, the following code combines both datasets using inner join, which matches records based on their zipcode areas. It is important to note that we avoid using `"COMPANY NAME"` and `"COMPANY ID"` for comparing the two datasets. This is because a utility company can either be a private enterprise or a government-run agency but it could not be both of the entities.
@@ -104,44 +106,48 @@ The result of an inner join gives us the areas that have both investor owned and
 The following code demonstrates the full outer join operation done on both datasets.
 
 ```{r}
-source("../01 Data/full_outer_join.R", echo = FALSE)
+source("../01 Data/full_outer_join.R", echo = TRUE)
 ```
 The full outer join operations simply gives all the IOUs and non-IOUs for all the zipcodes available in both datasets. 
 
 Anti join is an operation that returns the records that only exists in one dataset but not in the other. For instance, the following anti join gives us areas that only have investor owned utilities.
 ```{r}
-source("../01 Data/unique_io.R", echo = FALSE)
+source("../01 Data/unique_io.R", echo = TRUE)
 ```
 
-Meanwhile, the following anti join gives us areas that only have non-investor owned utilities.
+Meanwhile, the following anti join gives us areas where electricity are only provided by non-investor owned utilities.
 ```{r}
-source("../01 Data/unique_non_io.R", echo = FALSE)
+source("../01 Data/unique_non_io.R", echo = TRUE)
 ```
 
 
 **Visualizations From Wrangled Datasets**
 
-```{r, warning=FALSE}
-source("../03 Visualizations/areas with_only_io_or_nonio.R", echo = TRUE)
+The join operations gave us some interesting visualization ideas. We began by comparing the rates for areas that are only supplied either IOUs or non-IOUs. To do this, we have to use the results from the anti joins that we did earlier, which yield `unique_io` and `unique_nonio`. We chose to visualize them using violin plot.
+
+```{r, warning=FALSE, out.width = '900px', out.height = '500px'}
+source("../02 Data Wrangling/areas with_only_io_or_nonio.R", echo = TRUE)
 ```
 
-```{r, warning=FALSE}
+Then, we pivot our focus to areas that have both IOUs and non-IOUs. Again, we use violin plot to visualize so that it will be much easier to compare with the previous plot.
+```{r, warning=FALSE, out.width = '700px', out.height = '500px' }
 source("../02 Data Wrangling/areas_with_both_io_and_nonio.R", echo = TRUE)
 ```
 
-```{r, warning=FALSE}
+
+```{r, warning=FALSE, out.width = '900px', out.height = '500px'}
 source("../02 Data Wrangling/distribution_rates_by_state.R", echo = TRUE)
 ```
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, out.width = '900px', out.height = '700px'}
 source("../02 Data Wrangling/distribution_nonio_rates_by_state.R", echo = TRUE)
 ```
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, out.width = '900px', out.height = '700px' }
 source("../02 Data Wrangling/mean_rate_state_io.R", echo = TRUE)
 ```
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, out.width = '900px', out.height = '700px' }
 source("../02 Data Wrangling/mean_rate_state_non_io.R", echo = TRUE)
 ```
 
