@@ -8,7 +8,7 @@ output: html_document
 
 Investor Owned Utilities (IOU) is defined as utilities that are owned by private companies instead of state or federal public agency (EnergyVortex.com). Both datasets used in this projects are made public by the National Renewable Energy Laboratory (NREL) and Ventyx in February 2011. The datasets contain the average electricity rates for residential, commercial and industrial purposes for each utility.
 
-##Loading the Data Set from Oracle Database Into R Studio
+##Loading the Datasets from Oracle Database Into R Studio
 
 The datasets pulled from the Oracle database include the average electricity rates for residential, commercial and industrial purposes for each utility, details about the companies that provide the utilities as well as the zipcodes where the utilities are located. 
 
@@ -17,7 +17,7 @@ source("../01 Data/packages.R", echo = FALSE)
 ```
 
 ```{r}
-source("../01 Data/io_df.R", echo = FALSE)
+source("../01 Data/io_df.R", echo = TRUE)
 ```
 
 We realized that the datasets lack one valuable information which is a column that contains the states where the utilities are located. Nonetheless, with the information that we have on zipcodes, we are able to create the 'state' column and identify the states based on the corresponding zipcodes. Thus, we added 'state' column on both datasets.
@@ -27,22 +27,23 @@ source("../01 Data/adding_io_state.R", echo = TRUE)
 ```
 
 ```{r}
-source("../01 Data/non_io_df.R", echo = FALSE)
+source("../01 Data/non_io_df.R", echo = TRUE)
 ```
 
-```{r, include=FALSE, results = "hide"}
+```{r, include=FALSE}
 source("../01 Data/adding_non_io_state.R", echo = FALSE)
 nonio_df %>% tbl_df
 ```
 
-Now, both `io_df` and `nonio_df` have seven variables in their datasets. To explore the datasets, we load the dataframe from Oracle but set the `returnDimensions = 'True'` to recognize how many qualitative and quantitative variables that are present in the datasets. Then, we proceed to plot all the variables againsts the count of their own records so that we are able view the distribution of records for each of the variable. 
+Now, both `io_df` and `nonio_df` have seven variables in their datasets. To explore the datasets, we load the datasets from Oracle but set the `returnDimensions = 'True'`. This is done so that we can recognize how many qualitative and quantitative variables present in the datasets. Then, we proceed to plot all the variables againsts the count of their own records so that we are able view the distribution of records for each of the variable. 
 
 The following `myplot` function entails the plotting of categorical variable in the form of point plots while `myplot1` function plots the quantitative variables in the form of histograms.
 
 ```{r, message=FALSE}
 source("../01 Data/plot_function_qualitative.R", echo = TRUE)
 ```
-It is worth mentioning that we purposely remove the labels on the x-axes for all qualitative variables. This is because there are a lot of distinct datapoints and they eventually made the axes become unreadable. In addition, company name and company id give us less interesting insights compared to the number of utilities they manage which could possibly be across many states.
+
+Notice `theme(axis.text.x=element_blank())` inside the code above; this removes the labels on the x-axes for all qualitative variables. This is because there are a lot of distinct datapoints in both datasets and they eventually made the axes become unreadable. In addition, company name and company id give us less insights compared to the number of utilities they manage which could possibly be located across many states.
 
 ```{r}
 source("../01 Data/categoricals_io.R", echo = TRUE)
@@ -112,11 +113,13 @@ source("../01 Data/full_outer_join.R", echo = TRUE)
 The full outer join operation simply gives all the IOUs and non-IOUs for all the zipcodes available in both datasets. This is very useful for viewing a complete dataset on electricity rate regardless of the provider. However, in this project, we are more interested to compare the electricity rates between the two types of provider.
 
 Anti join is an operation that returns the records that only exists in one dataset but not in the other. For instance, the anti join below gives us areas that only have investor owned utilities (IOU). 
+
 ```{r}
 source("../01 Data/unique_io.R", echo = TRUE)
 ```
 
 Meanwhile, the following anti join gives us areas where electricity are only provided by non-investor owned utilities (non-IOU).
+
 ```{r}
 source("../01 Data/unique_non_io.R", echo = TRUE)
 ```
@@ -149,7 +152,7 @@ In the previous two violin plots, we can observe that there are many outliers in
 source("../02 Data Wrangling/distribution_rates_by_state.R", echo = TRUE)
 ```
 
-Based on the plot above, it can be seen that Hawaii have significantly higher electricity rates for all types of rate compared to other states. It is also interesting to note here that the distribution between the three types of rate in within a state are quite similar for all states. 
+Based on the plot above, it can be seen that Hawaii have significantly higher electricity rates for all types of rate compared to other states. It is also interesting to note here that the distribution between the three types of rate in within a state are quite similar for all states. However, some states like Massachussetts, Arizona and Maine have significantly wider distribution of electricity costs across all rates compared to other states.
 
 The graph below plots the distribution rates of states according to the type of rate for non-investor owned utilities.
 
@@ -157,11 +160,12 @@ The graph below plots the distribution rates of states according to the type of 
 source("../02 Data Wrangling/distribution_nonio_rates_by_state.R", echo = TRUE)
 ```
 
-Comparing the graph above with the previous graph on IOUs, it can be seen that non-IOUs provided electricity at much lower costs for all three types of rates, compared to IOUs, in almost all states, with the exception of Alaska. In fact, looking at Alaska and glancing at the scale of 'Value ($)' on the horizontal axis tell us what makes the distribution rate of non-IOUs quite skewed on the first violin plot above.
+Comparing the graph above with the previous graph on IOUs, it can be seen that non-IOUs provided electricity at much lower costs for all three types of rates, compared to IOUs, in almost all states, with the exception of Alaska - there are no significantly wide distribution of electricity rates compared to IOUs' point plot previously. Also, looking at Alaska and glancing at the scale of 'Value ($)' on the horizontal axis seems to tell us that it is Alaska's electricity rate that may have skewed the distribution rate of non-IOUs on the first violin plot above.
 
-Note that state-by-state comparison is not applicable to states like Delaware which does not have non-IOUs and Armed Forces Pacific which do not have IOUs.
+Note that state-by-state comparison between IOUs and non-IOUs point plots is not applicable to states; Delaware, for instance, does not have non-IOUs and Armed Forces Pacific does not have IOUs.
 
 The following bar graphs seek to display IOUs' average electricty costs for all types of rate for each state.
+
 ```{r, warning=FALSE, out.width = '900px', out.height = '700px' }
 source("../02 Data Wrangling/mean_rate_state_io.R", echo = TRUE)
 ```
@@ -169,6 +173,7 @@ source("../02 Data Wrangling/mean_rate_state_io.R", echo = TRUE)
 It can be observed from the graph above that Hawaii has the highest mean cost for all types of electricity. Accessibility issue may be the cause of such expensive electricity rate. Setting Hawaii aside, California, Delaware and Florida have the highest electricity cost for residential areas. Meanwhile, California, Delaware and Washington D.C. have the most expensive electrity cost for commercial purpose. For industrial purposes, California, Florida and Massachusetts have the highest electricity rates compared to all the states.
 
 The following graph shows non-IOUs' average electricty costs for all types of rate for each state.
+
 ```{r, warning=FALSE, out.width = '900px', out.height = '700px' }
 source("../02 Data Wrangling/mean_rate_state_non_io.R", echo = TRUE)
 ```

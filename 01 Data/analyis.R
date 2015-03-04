@@ -739,5 +739,6 @@ nonio_df %>%  gather("nonio_rates", "nonio_value", 4:6) %>% select(ZIPCODE, stat
   
 io_df %>% gather("io_rates", "io_value", 4:6)  %>% select(ZIPCODE, state, io_rates, io_value) %>% group_by(state, io_rates) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = state, y=mean_rate, fill = io_rates, io_rates)) + geom_bar(stat= "identity", position=position_dodge()) + theme(axis.text.x=element_text(angle=90, size=15)) + coord_flip()
 
+io_df %>% gather("io_rates", "io_value", 4:6)  %>% select(ZIPCODE, COMPANY_NAME, state, io_rates, io_value) %>% group_by(COMPANY_NAME, io_rates, state) %>% summarise(mean_rate = mean(io_value)) %>% ggplot(aes(x = COMPANY_NAME, y=mean_rate, color=state)) + facet_wrap(~state, nrow=15) + geom_jitter() + theme(axis.text.y=element_text(angle=90, size=10)) 
 
 #how about the average rate for areas that have both io and nonio ? How to portray them (or their mean rates) in a single graph?
