@@ -138,7 +138,7 @@ to the right of the plot and you will later recognize the reason behind this as 
 
 We pivot our focus to areas that have both IOUs and non-IOUs. Again, we use violin plot to visualize so that it will be much easier to compare with the previous plot.
 
-```{r, warning=FALSE, out.width = '700px', out.height = '500px' }
+```{r, warning=FALSE, out.width = '900px', out.height = '500px' }
 source("../02 Data Wrangling/areas_with_both_io_and_nonio.R", echo = TRUE)
 ```
 
